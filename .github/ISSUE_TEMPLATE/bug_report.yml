@@ -1,0 +1,37 @@
+name: Bug report
+description: Report incorrect state, setup failure, or display behaviour
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options: [Codex, Claude Code, Cursor, AWTRIX/display, Installer, Other]
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: 8bit Buddy, macOS, agent client, and AWTRIX versions
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitised logs
+      description: Remove prompts, tokens, paths, email addresses, and other sensitive data.
+      render: shell

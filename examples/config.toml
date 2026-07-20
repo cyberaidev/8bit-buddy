@@ -1,0 +1,25 @@
+# Copy to ~/.config/8bit-buddy/config.toml and change the token.
+[server]
+host = "127.0.0.1"
+port = 7391
+token = "replace-with-a-long-random-secret"
+
+[display]
+driver = "awtrix"
+host = "192.168.1.5"
+timeout_seconds = 1.5
+app_prefix = "8bitbuddy"
+scroll_speed = 85
+
+[ttl]
+running = 14400
+attention = 3600
+complete = 120
+error = 3600
+
+[colors]
+running = "#2196F3"
+attention = "#FF1744"
+complete = "#00E676"
+error = "#FF1744"
+background = "#000000"

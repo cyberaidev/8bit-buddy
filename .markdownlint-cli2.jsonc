@@ -1,0 +1,8 @@
+{
+  "config": {
+    // Repository docs intentionally use long URLs, tables, and a centered logo.
+    "MD013": false,
+    "MD033": false,
+    "MD041": false
+  }
+}

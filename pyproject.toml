@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "8bit-buddy"
+version = "0.1.0"
+description = "A macOS status beacon for Codex, Claude Code, and Cursor agents on AWTRIX LED displays"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Stefano Olivieri" }]
+keywords = ["codex", "claude-code", "cursor", "awtrix", "ulanzi", "led", "agent"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: MacOS X",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: User Interfaces",
+]
+
+[project.urls]
+Homepage = "https://github.com/cyberaidev/8bit-buddy"
+Issues = "https://github.com/cyberaidev/8bit-buddy/issues"
+
+[project.scripts]
+8bit-buddy = "eightbit_buddy.cli:main"
+
+[project.optional-dependencies]
+dev = ["ruff==0.15.22"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
