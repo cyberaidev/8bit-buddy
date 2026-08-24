@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import sys
 import time
 import urllib.error
@@ -119,10 +120,8 @@ def run(
         while elapsed < phase_seconds:
             now = now_fn()
             if not in_working_hours(now):
-                try:
+                with contextlib.suppress(OSError, urllib.error.URLError):
                     client.delete_custom_app(app_name)
-                except (OSError, urllib.error.URLError):
-                    pass
                 return 0
 
             remaining = phase_seconds - elapsed
