@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
 import sys
 import time
-import urllib.error
+from contextlib import suppress
 from datetime import datetime, time as clock_time
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -112,7 +111,7 @@ def run(
         icon = _phase_icon(config, standing)
         try:
             client.notify(_notification_payload(standing, icon))
-        except (OSError, urllib.error.URLError) as exc:
+        except OSError as exc:
             print(f"TC001 notification failed: {exc}", file=sys.stderr)
 
         phase_seconds = STAND_SECONDS if standing else SIT_SECONDS
@@ -120,7 +119,7 @@ def run(
         while elapsed < phase_seconds:
             now = now_fn()
             if not in_working_hours(now):
-                with contextlib.suppress(OSError, urllib.error.URLError):
+                with suppress(OSError):
                     client.delete_custom_app(app_name)
                 return 0
 
@@ -130,7 +129,7 @@ def run(
                     app_name,
                     _app_payload(standing, remaining, icon=icon),
                 )
-            except (OSError, urllib.error.URLError) as exc:
+            except OSError as exc:
                 print(f"TC001 dashboard update failed: {exc}", file=sys.stderr)
 
             until_close = (
