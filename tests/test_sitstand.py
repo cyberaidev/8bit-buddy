@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from eightbit_buddy.sitstand import _payload, in_working_hours
+from eightbit_buddy.sitstand import _app_payload, _payload, in_working_hours
 
 TZ = ZoneInfo("Australia/Melbourne")
 
@@ -25,6 +25,16 @@ class SitStandTests(unittest.TestCase):
         self.assertEqual(sitting["color"], "#00E676")
         self.assertEqual(standing["text"], "STAND UP - 15 MIN")
         self.assertEqual(standing["color"], "#FF9800")
+
+    def test_dashboard_payload_has_countdown_progress_and_icon(self) -> None:
+        sitting = _app_payload(False, 15 * 60, icon="chair")
+        standing = _app_payload(True, 5 * 60, icon="stand")
+        self.assertEqual(sitting["text"], "SIT 15m")
+        self.assertEqual(sitting["progress"], 50)
+        self.assertEqual(sitting["icon"], "chair")
+        self.assertEqual(standing["text"], "STAND 5m")
+        self.assertEqual(standing["progress"], 33)
+        self.assertEqual(standing["icon"], "stand")
 
 
 if __name__ == "__main__":
