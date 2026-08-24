@@ -27,6 +27,7 @@ Issues = "https://github.com/cyberaidev/8bit-buddy/issues"
 
 [project.scripts]
 8bit-buddy = "eightbit_buddy.cli:main"
+8bit-sit-stand = "eightbit_buddy.sitstand:main"
 
 [project.optional-dependencies]
 dev = ["ruff==0.15.22"]
