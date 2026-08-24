@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import datetime
+import pathlib
 import sys
 import time
-from contextlib import suppress
-from datetime import datetime, time as clock_time
-from pathlib import Path
-from zoneinfo import ZoneInfo
+import zoneinfo
 
 from .awtrix import AwtrixClient
 from .config import AppConfig, default_config_path, load_config
@@ -19,9 +19,12 @@ STAND_SECONDS = 15 * 60
 UPDATE_SECONDS = 60
 
 
-def in_working_hours(now: datetime) -> bool:
+def in_working_hours(now: datetime.datetime) -> bool:
     local_time = now.timetz().replace(tzinfo=None)
-    return now.weekday() in WEEKDAYS and clock_time(9, 0) <= local_time < clock_time(17, 30)
+    return (
+        now.weekday() in WEEKDAYS
+        and datetime.time(9, 0) <= local_time < datetime.time(17, 30)
+    )
 
 
 def _notification_payload(standing: bool, icon: str = "") -> dict[str, object]:
@@ -87,7 +90,7 @@ def _phase_icon(config: AppConfig, standing: bool) -> str:
 
 
 def run(
-    config_path: Path,
+    config_path: pathlib.Path,
     *,
     timezone: str = DEFAULT_TIMEZONE,
     sleep_fn=time.sleep,
@@ -99,8 +102,8 @@ def run(
 
     client = AwtrixClient(config.display.host, timeout=config.display.timeout_seconds)
     app_name = f"{_safe_app_name(config.display.app_prefix)}_sitstand"
-    tz = ZoneInfo(timezone)
-    now_fn = now_fn or (lambda: datetime.now(tz))
+    tz = zoneinfo.ZoneInfo(timezone)
+    now_fn = now_fn or (lambda: datetime.datetime.now(tz))
     standing = False
 
     while True:
@@ -119,7 +122,7 @@ def run(
         while elapsed < phase_seconds:
             now = now_fn()
             if not in_working_hours(now):
-                with suppress(OSError):
+                with contextlib.suppress(OSError):
                     client.delete_custom_app(app_name)
                 return 0
 
@@ -146,7 +149,7 @@ def run(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Weekday sit/stand reminders for an AWTRIX TC001.")
-    parser.add_argument("--config", type=Path, default=default_config_path())
+    parser.add_argument("--config", type=pathlib.Path, default=default_config_path())
     parser.add_argument("--timezone", default=DEFAULT_TIMEZONE)
     return parser
 
