@@ -89,9 +89,7 @@ def run(
         seconds = 900 if standing else 1800
         standing = not standing
 
-        remaining = (
-            now.replace(hour=17, minute=30, second=0, microsecond=0) - now
-        ).total_seconds()
+        remaining = (now.replace(hour=17, minute=30, second=0, microsecond=0) - now).total_seconds()
         if remaining <= 0:
             return 0
         sleep_fn(min(seconds, remaining))
