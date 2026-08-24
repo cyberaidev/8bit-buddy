@@ -21,10 +21,7 @@ UPDATE_SECONDS = 60
 
 def in_working_hours(now: datetime.datetime) -> bool:
     local_time = now.timetz().replace(tzinfo=None)
-    return (
-        now.weekday() in WEEKDAYS
-        and datetime.time(9, 0) <= local_time < datetime.time(17, 30)
-    )
+    return now.weekday() in WEEKDAYS and datetime.time(9, 0) <= local_time < datetime.time(17, 30)
 
 
 def _notification_payload(standing: bool, icon: str = "") -> dict[str, object]:
