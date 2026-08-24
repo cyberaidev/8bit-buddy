@@ -118,6 +118,110 @@ them. Cursor reloads hook configuration automatically.
 8bit-buddy serve
 ```
 
+## Sit/stand reminders
+
+8bit Buddy can also use the TC001 as a weekday desk reminder. The default schedule is:
+
+- Monday-Friday only
+- 09:00-17:30 in `Australia/Melbourne`
+- sit for 30 minutes
+- beep and display `STAND UP - 15 MIN`
+- stand for 15 minutes
+- beep and display `SIT DOWN - 30 MIN`
+- repeat until the 17:30 hard cutoff
+
+The reminder process runs locally on the Mac and talks directly to the TC001 over the LAN. ChatGPT
+does not need to be open, and the reminder does not depend on an Internet connection once installed.
+
+### Install from a cloned repository
+
+If macOS/Homebrew Python reports `externally-managed-environment`, use a virtual environment instead
+of installing into the system Python:
+
+```bash
+git clone https://github.com/cyberaidev/8bit-buddy.git
+cd 8bit-buddy
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+```
+
+Confirm the reminder executable is available:
+
+```bash
+which 8bit-sit-stand
+8bit-sit-stand --help
+```
+
+The path should normally point inside the repository's `.venv/bin/` directory.
+
+### Install the macOS LaunchAgent
+
+From the repository root:
+
+```bash
+chmod +x scripts/install-sit-stand-macos.sh
+./scripts/install-sit-stand-macos.sh --start-now
+```
+
+`--start-now` starts the reminder immediately if the current time is inside the weekday work window.
+Without that option, the LaunchAgent waits for the next scheduled weekday start.
+
+The LaunchAgent stores the absolute path to `8bit-sit-stand`, so the virtual environment does not
+need to be manually activated after installation.
+
+### Reboots and logins
+
+The sit/stand reminder survives Mac reboots because it is installed as a macOS LaunchAgent. It starts
+after the user logs in; it does not run while the Mac is sitting at the login screen.
+
+Verify the LaunchAgent registration with:
+
+```bash
+launchctl print gui/$(id -u)/dev.cyberai.8bit-buddy.sit-stand
+```
+
+Check logs with:
+
+```bash
+tail -50 ~/Library/Logs/8bitBuddySitStand.log
+tail -50 ~/Library/Logs/8bitBuddySitStand.error.log
+```
+
+### Troubleshooting
+
+If the shell shows `quote>`, cancel the unfinished quoted command with `Ctrl+C`, then rerun the
+command without copying surrounding quotes or comment text.
+
+If the installer reports:
+
+```text
+8bit-sit-stand is not on PATH
+```
+
+activate the project virtual environment and install the package first:
+
+```bash
+source .venv/bin/activate
+python -m pip install -e .
+which 8bit-sit-stand
+```
+
+If the installer script reports `permission denied`, run:
+
+```bash
+chmod +x scripts/install-sit-stand-macos.sh
+```
+
+or invoke it explicitly with Bash:
+
+```bash
+bash scripts/install-sit-stand-macos.sh --start-now
+```
+
+If `git status` reports `not a git repository`, make sure you are inside the actual cloned repository
+rather than an extracted ZIP or older copied directory.
+
 ## Agent names and concurrent work
 
 Main agents are named from the provider and workspace, such as `Codex · checkout`. Subagents use
@@ -145,6 +249,7 @@ printf '%s' '{"hook_event_name":"Stop","session_id":"demo","cwd":"/tmp/demo"}' \
 8bit-buddy emit               Send a manual state
 8bit-buddy uninstall-hooks    Remove only 8bit Buddy hook handlers
 8bit-buddy uninstall-service  Stop/remove the macOS LaunchAgent
+8bit-sit-stand                Run the weekday sit/stand reminder loop
 ```
 
 ## Detection notes
