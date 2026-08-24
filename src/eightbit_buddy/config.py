@@ -26,6 +26,16 @@ class DisplaySettings:
 
 
 @dataclass(frozen=True, slots=True)
+class IconSettings:
+    running: str = ""
+    attention: str = ""
+    complete: str = ""
+    error: str = ""
+    sitting: str = ""
+    standing: str = ""
+
+
+@dataclass(frozen=True, slots=True)
 class TTLSettings:
     running: int = 14_400
     attention: int = 3_600
@@ -46,6 +56,7 @@ class ColorSettings:
 class AppConfig:
     server: ServerSettings = field(default_factory=ServerSettings)
     display: DisplaySettings = field(default_factory=DisplaySettings)
+    icons: IconSettings = field(default_factory=IconSettings)
     ttl: TTLSettings = field(default_factory=TTLSettings)
     colors: ColorSettings = field(default_factory=ColorSettings)
 
@@ -69,6 +80,7 @@ def load_config(path: Path | None = None) -> AppConfig:
 
     server = _section(data, "server")
     display = _section(data, "display")
+    icons = _section(data, "icons")
     ttl = _section(data, "ttl")
     colors = _section(data, "colors")
     return AppConfig(
@@ -83,6 +95,14 @@ def load_config(path: Path | None = None) -> AppConfig:
             timeout_seconds=float(display.get("timeout_seconds", 1.5)),
             app_prefix=str(display.get("app_prefix", "8bitbuddy")),
             scroll_speed=int(display.get("scroll_speed", 85)),
+        ),
+        icons=IconSettings(
+            running=str(icons.get("running", "")),
+            attention=str(icons.get("attention", "")),
+            complete=str(icons.get("complete", "")),
+            error=str(icons.get("error", "")),
+            sitting=str(icons.get("sitting", "")),
+            standing=str(icons.get("standing", "")),
         ),
         ttl=TTLSettings(
             running=int(ttl.get("running", 14_400)),
@@ -115,6 +135,16 @@ host = "{display_host}"
 timeout_seconds = 1.5
 app_prefix = "8bitbuddy"
 scroll_speed = 85
+
+# AWTRIX icon ID or custom filename without extension.
+# Upload custom GIF/JPG files into the device ICONS folder.
+[icons]
+running = ""
+attention = ""
+complete = ""
+error = ""
+sitting = ""
+standing = ""
 
 [ttl]
 running = 14400
